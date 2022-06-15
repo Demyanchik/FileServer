@@ -1,0 +1,768 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - FileServer</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/Scripts/MyScripts/options.js")
+
+    @using WebApplication2.Controllers; 
+    @using WebApplication2.Models;
+    @{
+        Users userInfo = ViewBag.userInfo;
+        //HomeController.ProcessStorageSpace((string)ViewBag.login,(PvI_KP_Entities)ViewBag.context);
+
+        string Action_page = (string)ViewBag.Action_page;
+        bool? write_mode = (bool?)ViewBag.write_mode;
+
+}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+</head>
+<body>
+    @if (ViewBag.Action_page != null && ((string)(ViewBag.Action_page)).Equals("Garbage"))
+    {
+        <div class="collapse" id="file_menu">
+            <nav class="navbar navbar-dark bg-dark fixed-top">
+                <div class="container-fluid row">
+                    <style>
+                        .spans {
+                            margin: 5px 5px;
+                        }
+                    </style>
+                    <div class="col-2">
+                        @*<button class="btn">
+                                <i class="bi bi-info-circle" style="color: white"></i>
+                            </button>*@
+
+                        <div class="dropdown">
+                            <button class="btn dropdown-toggle" style="width:40px" type="button" id="dropdown_info" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-info-circle" style="color: white"></i>
+                            </button>
+
+                            <style>
+                                .disabled {
+                                    pointer-events: none;
+                                    opacity: 0.6;
+                                }
+                            </style>
+                            <ul class="dropdown-menu" style="width: auto; padding: 15px" aria-labelledby="dropdown_info">
+                                <li><span style="font-weight:bold">Имя: </span><span id="info_file_name"></span></li>
+                                <li><span style="font-weight:bold">Размер: </span><span id="info_file_size"></span></li>
+                                <li><span style="font-weight:bold">Изменен: </span><span id="info_last_changed"></span></li>
+                            </ul>
+
+                            <span id="file_name" class="navbar-brand" style="font-size:14px;">FileName</span>
+                            <input type="hidden" id="file_partial_path" value="" />
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        @* Поделится *@
+                        @Scripts.Render("~/Scripts/MyScripts/share_tabs.js")
+                        @*<button class="btn options" onmouseover="options_mouse_over(this)" onmouseout="options_mouse_out(this)"
+                                    data-bs-toggle="modal" data-bs-target="#Rename">
+                                <i class="bi bi-pen-fill"></i>
+                                <span class="spans">Переименовать</span>
+                            </button>*@
+                        <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#Share" onclick="restore()">
+                            <i class="bi bi-arrow-counterclockwise"></i>
+                            <span class="spans">Восстановить</span>
+                        </button>
+
+                        <button class="btn btn-secondary" onclick="remove_permanent()">
+                            <i class="bi bi-file-earmark-excel"></i>
+                            <span class="spans">Удалить навсегда</span>
+                        </button>
+                        <style>
+                            .file_input {
+                                visibility: collapse;
+                                width: 0px;
+                                height: 0px;
+                            }
+                        </style>
+                        @using (Html.BeginForm("RemovePermanent", "Home", FormMethod.Post, new { @class = "file_input", enctype = "multipart/form-data", @id = "file_context_menu" }))
+                        {
+                            <input type="hidden" id="context_menu_path" name="path" value="@ViewBag.path" />
+                            <input type="hidden" id="context_menu_name" name="name" />
+                            <input type="hidden" id="context_menu_type" name="type" />
+
+                            <input type="hidden" name="action" value="@ViewBag.Action_page" />
+
+                            <input type="submit" id="context_menu_submit" />
+                        }
+
+                    </div>
+                    <div class="col-6">
+                        <style>
+                            .options {
+                                color: white;
+                            }
+                        </style>
+                        <button style="margin: 7px 60px" class="btn options position-absolute top-0 end-0" onmouseover="options_mouse_over(this)" onmouseout="options_mouse_out(this)" onclick="$('#file_menu').hide(); $('#main_menu').show();">
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+                    </div>
+                    @*</form>*@
+
+                </div>
+            </nav>
+        </div>
+    }
+    else
+    {
+        <div class="collapse" id="file_menu">
+            <nav class="navbar navbar-dark bg-dark fixed-top">
+                <div class="container-fluid row">
+                    <style>
+                        .spans {
+                            margin: 5px 5px;
+                        }
+                    </style>
+                    <div class="col-2">
+                        @*<button class="btn">
+                                <i class="bi bi-info-circle" style="color: white"></i>
+                            </button>*@
+
+                        <div class="dropdown">
+                            <button class="btn dropdown-toggle" style="width:40px" type="button" id="dropdown_info" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-info-circle" style="color: white"></i>
+                            </button>
+
+                            <style>
+                                .disabled {
+                                    pointer-events: none;
+                                    opacity: 0.6;
+                                }
+                            </style>
+                            <ul class="dropdown-menu" style="width: auto; padding: 15px" aria-labelledby="dropdown_info">
+                                <li><span style="font-weight:bold">Имя: </span><span id="info_file_name"></span></li>
+                                <li><span style="font-weight:bold">Размер: </span><span id="info_file_size"></span></li>
+                                <li><span style="font-weight:bold">Изменен: </span><span id="info_last_changed"></span></li>
+                            </ul>
+
+                            <span id="file_name" class="navbar-brand" style="font-size:14px;">FileName</span>
+                            <input type="hidden" id="file_partial_path" value="" />
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        @* Поделится *@
+                        @Scripts.Render("~/Scripts/MyScripts/share_tabs.js")
+                        @*<button class="btn options" onmouseover="options_mouse_over(this)" onmouseout="options_mouse_out(this)"
+                                    data-bs-toggle="modal" data-bs-target="#Rename">
+                                <i class="bi bi-pen-fill"></i>
+                                <span class="spans">Переименовать</span>
+                            </button>*@
+                        @if (ViewBag.Action_page != null && !((string)(ViewBag.Action_page)).Equals("Garbage"))
+                        {
+                            if (!((string)(ViewBag.Action_page)).Equals("Downloads"))
+                            {
+                                if (ViewBag.isIndexPage != null && (bool)(ViewBag.isIndexPage) == false)
+                                {
+
+                                }
+                                else
+                                {
+                                    <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#Share" onclick="share_click('@userInfo.login', $('#file_partial_path').val())">
+                                        <i class="bi bi-share-fill"></i>
+                                        <span class="spans">Поделится</span>
+                                    </button>
+                                }
+
+                                <div class="modal fade" id="Share" tabindex="-1" aria-labelledby="ShareLabel" aria-hidden="true">
+                                    <style>
+                                        .modal-backdrop {
+                                            z-index: 0;
+                                        }
+                                    </style>
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <style>
+                                            .modal_borders {
+                                                border: none;
+                                            }
+                                        </style>
+                                        <div class="modal-content">
+                                            @using (Html.BeginForm("CreateLink", "Home", FormMethod.Post))
+                                            {
+                                                <div class="modal-header modal_borders">
+                                                    <h5 class="modal-title" id="ShareLabel">Общий доступ предоставить:</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div>
+                                                        <ul class="nav nav-tabs">
+                                                            @*<li class="nav-item">
+                                                                    <button id="share_button_user" class="nav-link active" onclick="switch_tab('user')">Пользователю</button>
+                                                                </li>
+                                                                <li class="nav-item">
+                                                                    <button id="share_button_group" class="nav-link" onclick="switch_tab('group')">Группе</button>
+                                                                </li>*@
+                                                            <li class="nav-item">
+                                                                <button type="button" id="share_button_link" class="nav-link" onclick="switch_tab('link')">Ссылкой</button>
+                                                            </li>
+                                                        </ul>
+                                                        <div id="share_body_user" style="height: 400px; display: none">user</div>
+                                                        <div id="share_body_group" style="height: 400px; display: none">group</div>
+                                                        <div id="share_body_link" style="height: 100px;">
+                                                            <div style="margin: 10px" class="row">
+                                                                <input type="hidden" id="link_filename" />
+                                                                <input type="hidden" name="catchall" value="@ViewBag.path" />
+
+                                                                <div class="row">
+                                                                    <input type="text" name="link_url" class="form-control col" id="link_value" value="link" disabled />
+                                                                    <script>
+                                                                        function CopyToClipboard(el) {
+                                                                            /* Get the text field */
+                                                                            var copyText = el;
+
+                                                                            /* Select the text field */
+                                                                            copyText.select();
+
+                                                                            /* Copy the text inside the text field */
+                                                                            document.execCommand("copy");
+
+                                                                            /* Alert the copied text */
+                                                                            navigator.clipboard.writeText('').then(function () {
+                                                                                /* clipboard successfully set */
+                                                                            }, function () {
+                                                                                /* clipboard write failed */
+                                                                            });
+
+                                                                            navigator.clipboard.writeText(copyText.value).then(function () {
+                                                                                /* clipboard successfully set */
+                                                                            }, function () {
+                                                                                alert('copy error');
+                                                                                /* clipboard write failed */
+                                                                            });
+                                                                        }
+
+                                                                    </script>
+                                                                    <div class="col-1">
+                                                                        <input type="hidden" name="user" id="link_modal_user" value="user" />
+                                                                        <input type="hidden" name="path" id="link_modal_path" value="path" />
+                                                                        <input type="hidden" name="type" id="link_modal_type" value="type" />
+
+                                                                        <button class="btn btn-primary" type="button" onclick="CopyToClipboard(document.getElementById('link_value'))">
+                                                                            <i class="bi bi-back"></i>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer modal_borders">
+                                                    <button type="submit" class="btn btn-primary" onclick="$('#link_value').removeAttr('disabled')">Поделится</button>
+                                                </div>
+
+                                            }
+
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+                            <button class="btn btn-secondary" onclick="download()">
+                                <i class="bi bi-download"></i>
+                                <span class="spans">Скачать</span>
+                            </button>
+                            <style>
+                                .file_input {
+                                    visibility: collapse;
+                                    width: 0px;
+                                    height: 0px;
+                                }
+                            </style>
+                            using (Html.BeginForm("DownloadFile", "Home", FormMethod.Post, new { @class = "file_input", enctype = "multipart/form-data", @id = "file_context_menu" }))
+                            {
+                                <input type="hidden" id="context_menu_root_parm" name="root_parm" value="@ViewBag.root_parm" />
+                                <input type="hidden" id="context_menu_catchall_parm" name="catchall_parm" value="@ViewBag.catchall_parm" />
+
+                                <input type="hidden" id="context_menu_file_root" name="file_root" value="@ViewBag.file_root" />
+                                <input type="hidden" id="context_menu_groups_root" name="groups_root" value="@ViewBag.groups_root" />
+
+                                <input type="hidden" id="context_menu_src_dir" name="src_dir" />
+
+                                <input type="hidden" id="context_menu_path" name="path" value="@ViewBag.path" />
+                                <input type="hidden" id="context_menu_name" name="name" />
+                                <input type="hidden" id="context_menu_type" name="type" />
+                                <input type="hidden" id="context_menu_new_name" name="new_name" />
+
+                                <input type="hidden" name="action" value="@ViewBag.Action_page" />
+
+                                <input type="submit" id="context_menu_submit" />
+                            }
+                        }
+
+                    </div>
+                    <div class="col-6">
+                        <div style="margin: 0px 0px 0px 60px">
+                            <style>
+                                .options {
+                                    color: white;
+                                }
+                            </style>
+                            @if (ViewBag.write_mode != null && write_mode == false) { }
+                            else
+                            {
+                                @* Переименовать *@
+                                <button class="btn options" onmouseover="options_mouse_over(this)" onmouseout="options_mouse_out(this)"
+                                        data-bs-toggle="modal" data-bs-target="#MoveTo">
+                                    <i class="bi bi-arrow-return-right"></i>
+                                    <span class="spans">Переместить</span>
+                                </button>
+                                <button class="btn options" onmouseover="options_mouse_over(this)" onmouseout="options_mouse_out(this)"
+                                        data-bs-toggle="modal" data-bs-target="#CopyTo">
+                                    <i class="bi bi-back"></i>
+                                    <span class="spans">Копировать</span>
+                                </button>
+                            }
+
+                            @{
+                                if (ViewBag.write_mode != null && write_mode == false) { }
+                                else
+                                {
+                                    <button class="btn options" onmouseover="options_mouse_over(this)" onmouseout="options_mouse_out(this)"
+                                            data-bs-toggle="modal" data-bs-target="#Rename">
+                                        <i class="bi bi-pen-fill"></i>
+                                        <span class="spans">Переименовать</span>
+                                    </button>
+                                }
+                            }
+
+                            <div class="modal fade" id="MoveTo" tabindex="-1" aria-labelledby="RenameLabel" aria-hidden="true">
+                                <style>
+                                    .modal-backdrop {
+                                        z-index: 0;
+                                    }
+                                </style>
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <style>
+                                        .modal_borders {
+                                            border: none;
+                                        }
+                                    </style>
+
+                                    <div class="modal-content">
+                                        <div class="modal-header modal_borders">
+                                            <h5 class="modal-title" id="RenameLabel">Переместить в папку:</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="row" style="margin: 0px 5px">
+                                                <div class="btn btn-primary col-3"><span style="font-weight: bold">@ViewBag.move_root_name</span></div>
+                                                <input id="move_src_path" class="form-control col" style="margin: 0px 5px" placeholder="Относительный путь" type="text" />
+                                                <div class="btn btn-outline-primary col-1" onclick="putSlash('move_src_path')">+/</div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer modal_borders">
+                                            <button type="button" onclick="moveTo()" class="btn btn-primary">Переместить</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="modal fade" id="CopyTo" tabindex="-1" aria-labelledby="RenameLabel" aria-hidden="true">
+                                <style>
+                                    .modal-backdrop {
+                                        z-index: 0;
+                                    }
+                                </style>
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <style>
+                                        .modal_borders {
+                                            border: none;
+                                        }
+                                    </style>
+
+                                    <div class="modal-content">
+                                        <div class="modal-header modal_borders">
+                                            <h5 class="modal-title" id="RenameLabel">Копировать в папку:</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="row" style="margin: 0px 5px">
+                                                <div class="btn btn-primary col-3"><span style="font-weight: bold">@ViewBag.move_root_name</span></div>
+                                                <input id="copy_src_path" class="form-control col" style="margin: 0px 5px" placeholder="Относительный путь" type="text" />
+                                                <div class="btn btn-outline-primary col-1" onclick="putSlash('copy_src_path')">+/</div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer modal_borders">
+                                            <button type="button" onclick="copyTo()" class="btn btn-primary">Копировать</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="modal fade" id="Rename" tabindex="-1" aria-labelledby="RenameLabel" aria-hidden="true">
+                                <style>
+                                    .modal-backdrop {
+                                        z-index: 0;
+                                    }
+                                </style>
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <style>
+                                        .modal_borders {
+                                            border: none;
+                                        }
+                                    </style>
+
+                                    <div class="modal-content">
+                                        <div class="modal-header modal_borders">
+                                            <h5 class="modal-title" id="RenameLabel">Переименовать:</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <input class="form-control" id="new_name" placeholder="Новое имя" style="width: 100%; max-width: 500px" type="text" />
+                                        </div>
+                                        <div class="modal-footer modal_borders">
+                                            <button type="button" onclick="rename()" class="btn btn-primary">Сохранить</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="modal fade" id="Group_Remove" tabindex="-1" aria-labelledby="RenameLabel" aria-hidden="true">
+                                <style>
+                                    .modal-backdrop {
+                                        z-index: 0;
+                                    }
+                                </style>
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <style>
+                                        .modal_borders {
+                                            border: none;
+                                        }
+                                    </style>
+
+                                    <div class="modal-content">
+                                        <div class="modal-header modal_borders">
+                                            <h5 class="modal-title" id="RenameLabel">Удаление:</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <h6>Вы действительно хотите удалить выбранный объект? Он будет удален без возможности восстановления, а другие участники группы утратят к нему доступ.</h6>
+                                        </div>
+                                        <div class="modal-footer modal_borders">
+                                            <button type="button" onclick="remove_permanent()" class="btn btn-primary">Удалить навсегда</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @*  *@
+
+
+                            @*<button class="btn options" onmouseover="options_mouse_over(this)" onmouseout="options_mouse_out(this)">
+                                    <i class="bi bi-folder"></i>
+                                    <span class="spans">Создать папку</span>
+                                </button>*@
+
+                            @{
+                                if (Action_page != null && Action_page.Equals("GroupsFiles"))
+                                {
+                                    if (ViewBag.write_mode != null && write_mode == false) { }
+                                    else
+                                    {
+                                        <button class="btn options" onmouseover="options_mouse_over(this)" onmouseout="options_mouse_out(this)"
+                                                data-bs-toggle="modal" data-bs-target="#Group_Remove">
+                                            <i class="bi bi-trash"></i>
+                                            <span class="spans">Удалить</span>
+                                        </button>
+                                    }
+                                }
+                                else
+                                {
+                                    <button class="btn options" onmouseover="options_mouse_over(this)" onmouseout="options_mouse_out(this)"
+                                            onclick="remove()">
+                                        <i class="bi bi-trash"></i>
+                                        <span class="spans">Удалить</span>
+                                    </button>
+                                }
+                            }
+
+                            @{
+                                if (ViewBag.write_mode != null && write_mode == false)
+                                {
+                                    <div class="btn disabled" style="color: white; width: 600px"></div>
+                                }
+                            }
+
+                            <button class="btn options" onmouseover="options_mouse_over(this)" onmouseout="options_mouse_out(this)" onclick="$('#file_menu').hide(); $('#main_menu').show();">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </div>
+                    </div>
+                    @*</form>*@
+
+                </div>
+            </nav>
+        </div>
+    }
+
+    <nav class="navbar fixed-top navbar-light" id="main_menu" style="background-color: #a1d7ff; ">
+        <div class="container-fluid">
+            <div class="col-2">
+                <a class="navbar-brand" href="~/">FileServer</a>
+            </div>
+            <div class="col-4">
+                <button class="btn btn-primary" style="width: 300px" onclick="$('#upload').click()">
+                    <i class="bi bi-upload"></i>
+                    <span class="spans">Загрузить в «Файлы»</span>
+                </button>
+                <style>
+                    .file_input {
+                        visibility: collapse;
+                        width: 0px;
+                        height: 0px;
+                    }
+                </style>
+                @*@using (Ajax.BeginForm("UploadFile", "Home", new AjaxOptions { UpdateTargetId = "page" }))
+                    {
+
+                    }*@
+                @using (Html.BeginForm("UploadFile", "Home", FormMethod.Post, new { @class = "file_input", enctype = "multipart/form-data" }))
+                {
+                    <input type="hidden" name="path" value="@ViewBag.path" />
+                    @*<form action="@(HomeController.api_uri + "UploadFile")" method="post" class="file_input" enctype="multipart/form-data">*@
+                    <input type="file" id="upload" name="upload" />
+
+                    <input type="submit" id="file_submit" />
+                    @*</form>*@
+                }
+                <script>
+                    document.getElementById("upload").onchange = function () {
+                        document.getElementById("file_submit").click();
+                    };
+                </script>
+            </div>
+            <div class="col-4 disabled">
+
+            </div>
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle" type="button" style="min-width: 180px" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                    @ViewBag.login
+                </button>
+                <style>
+                    .disabled {
+                        pointer-events: none;
+                        opacity: 0.6;
+                    }
+                </style>
+                <ul class="dropdown-menu" style="width: 180px" aria-labelledby="dropdownMenuButton1">
+                    <li><button class="dropdown-item" data-bs-toggle="modal" onclick="file_menu_background()" data-bs-target="#Profile">Профиль</button></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="@(HomeController.hostname)Home/LogOut">Выйти</a></li>
+                </ul>
+            </div>
+
+        </div>
+    </nav>
+
+    <div class="modal fade" id="Profile" tabindex="-1" aria-hidden="true">
+        <style>
+            .modal-backdrop {
+                z-index: 0;
+            }
+        </style>
+        <div class="modal-dialog modal-dialog-centered">
+            <style>
+                .modal_borders {
+                    border: none;
+                }
+            </style>
+            <div class="modal-content">
+                @using (Html.BeginForm("ChangeProfile", "Home", FormMethod.Post))
+                {
+                    <input type="hidden" name="catchall" value="@ViewBag.path" />
+                    <input type="hidden" name="action" value="@ViewBag.Action_page" />
+
+                    <div class="modal-header modal_borders">
+                        <h5 class="modal-title" id="RenameLabel">Настройки профиля:</h5>
+                        <button type="button" onclick="file_menu_foreground()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" style="height: 300px">
+                        <style>
+                            .for_text {
+                                font-size: 18px;
+                                vertical-align: central;
+                            }
+
+                            .margs {
+                                margin: 0px 0px 15px 0px;
+                            }
+
+                            .weight {
+                                font-weight: bold;
+                            }
+                        </style>
+                        <div class="for_text" style="margin: 10px;">
+                            <div class="row margs">
+                                <div class="col-5">Логин:</div>
+                                <div class="col-7 weight">@userInfo.login</div>
+                            </div>
+                            <div class="row margs">
+                                <div class="col-5">Пароль:</div>
+                                <div class="col-7">
+                                    <input class="form-control" name="password" placeholder="Пароль" type="password" value="@userInfo.password" required />
+                                </div>
+                            </div>
+                            <div class="row margs">
+                                <div class="col-5">Имя пользователя:</div>
+                                <div class="col-7">
+                                    <input class="form-control" name="fullname" placeholder="Полное имя" type="text" value="@userInfo.fullname" required />
+                                </div>
+                            </div>
+                            <div class="row" style="margin: 30px 0px">
+                                <div class="col-9">Разрешить другим пользователям добавлять меня в группы:</div>
+                                @{
+                                    bool allow_mode = false;
+                                    if (userInfo.allow_add != null)
+                                    {
+                                        if (userInfo.allow_add == true)
+                                        {
+                                            allow_mode = true;
+                                        }
+                                    }
+                                }
+                                <div class="col-3">
+                                    <input class="form-check-input" type="checkbox" name="allow_add" style="zoom: 1.5;" id="flexCheckChecked" @(allow_mode ? "checked" : "")>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer modal_borders">
+                        <button class="btn btn-primary">Сохранить</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div style="margin:15px">
+        <style>
+            ._progress {
+                margin: 5px;
+                font-size: 14px;
+            }
+        </style>
+
+        @*<p>
+                    <a class="btn btn-primary" data-toggle="collapse" href="#collapseexample" role="button" aria-expanded="false" aria-controls="collapseexample">
+                        link with href
+                    </a>
+                    <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseexample" aria-expanded="false" aria-controls="collapseexample" onclick="$('#file_menu').collapse('toggle'); $('#main_menu').toggle()">
+                        button with data-target
+                    </button>
+                </p>
+            <div class="collapse" id="collapseexample">
+                    <div class="card card-body">
+                        anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
+                    </div>
+                </div>*@
+
+        <div class="row">
+            <div class="col-md-2">
+                <style>
+                    .sections {
+                        margin: 0 0 20px 0;
+                    }
+                </style>
+                <section class="sections">
+                    <div class="dropdown-divider"></div>
+                    <h6>Хранилище</h6>
+                    <div class="dropdown-divider"></div>
+                    <ul class="nav nav-pills flex-column" aria-orientation="vertical">
+                        <li class="nav-item">
+                            <a class="nav-link" id="index_ref" href="@(HomeController.hostname)Home/Index/">Файлы</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="garbage_ref" href="@(HomeController.hostname)Home/Garbage/">Корзина</a>
+                        </li>
+                        @*<li class="nav-item">
+                                <a class="nav-link" id="history_ref" href="@(HomeController.hostname)Home/History">История</a>
+                            </li>*@
+                    </ul>
+                </section>
+
+                <section class="sections">
+                    <div class="dropdown-divider"></div>
+                    <h6>Общий доступ</h6>
+                    <div class="dropdown-divider"></div>
+                    <style>
+                        .disabled {
+                            pointer-events: none;
+                            opacity: 0.6;
+                        }
+                    </style>
+                    <ul class="nav nav-pills flex-column" aria-orientation="vertical">
+                        @*<li class="nav-item">
+                                <a class="nav-link disabled" id="shared_by_you_ref" href="About">Поделились вы</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="shared_to_you_ref" href="/Home/SharedWithYou">Поделились с вами</a>
+                            </li>*@
+                        <li class="nav-item">
+                            <a class="nav-link" id="downloads_ref" href="/Home/Downloads/">Загрузки</a>
+                            <a class="nav-link" id="groups_files_ref" href="/Home/GroupsFiles/">Файлы групп</a>
+                        </li>
+                    </ul>
+                </section>
+                @if (ViewBag.show_admin_panel)
+                {
+                    <section class="sections">
+                        <div class="dropdown-divider"></div>
+                        <h6>Администратор</h6>
+                        <div class="dropdown-divider"></div>
+
+                        <ul class="nav nav-pills flex-column" aria-orientation="vertical">
+                            <li class="nav-item">
+                                <a class="nav-link" id="users_ref" href="@(HomeController.hostname)Home/Users">Пользователи</a>
+                            </li>
+                        </ul>
+                    </section>
+                }
+
+                <style>
+                    .quota {
+                        width: 230px;
+                        position: absolute;
+                        bottom: 80px;
+                        left: 20px;
+                    }
+                </style>
+                <div class="quota">
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width: @(ViewBag.progress)%"></div>
+                    </div>
+                    <div class="_progress">
+                        <label>Свободно: @ViewBag.free из @ViewBag.max</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-10" id="page">
+                @RenderBody()
+            </div>
+        </div>
+
+        @RenderSection("footer", false)
+    </div>
+    @Scripts.Render("~/bundles/jquery")
+
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+    @Scripts.Render("~/Scripts/MyScripts/load.js")
+    <script>
+        PageLoad('@ViewBag.Action');
+    </script>
+
+    @{if (TempData["toast"] != null && (bool)TempData["toast"])
+        {
+            <script>
+                $('.toast').show();
+            </script>
+        }
+    }
+</body>
+</html>

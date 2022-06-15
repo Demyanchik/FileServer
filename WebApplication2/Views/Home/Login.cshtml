@@ -1,0 +1,104 @@
+﻿@{
+    ViewBag.Title = "Вход";
+    ViewBag.Action = "login";
+    Layout = null;
+}
+
+@{
+    int? status = ViewBag.status;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - FileServer</title>
+    @Scripts.Render("~/Scripts/bootstrap.js")
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+</head>
+<body style="background-image: url(../../Images/img102.jpg);">
+
+    <div style="margin: 80px 0 0 0;">
+        <div class="row justify-content-center">
+            <div class="col-md-3">
+                <div class="row">
+                    <div class="col"></div>
+                    <div class="col">
+                        <h1 style="margin: 0 0 15px 0; color: white">FileServer</h1>
+                    </div>
+                    <div class="col"></div>
+
+                </div>
+                <div class="card">
+                    <style>
+                        .input_text {
+                            font-size: 12px;
+                        }
+
+                        .my_validation {
+                            visibility: collapse;
+                        }
+                    </style>
+                    @using (Html.BeginForm("Login", "Home", FormMethod.Post, new { style = "margin: 22px" }))
+                    {
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" style="width: 40px">
+                                <i class="bi bi-at"></i>
+                            </span>
+                            <input name="login" type="text" class="form-control @(status == -1?"is-invalid":"")" value="@ViewBag.login" placeholder="Имя пользователя" aria-label="Username" aria-describedby="basic-addon1" required>
+                            @if (status == -1)
+                            {
+                                <div id="login_error" class="invalid-feedback" style="display: block">
+                                    <span>Такого пользователя не существует.</span>
+                                </div>
+                            }
+
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" style="width: 40px">
+                                <i class="bi bi-key"></i>
+                            </span>
+                            <input name="password" type="password" class="form-control @(status == -2?"is-invalid":"")" value="@ViewBag.password" id="floatingPassword" placeholder="Пароль" required>
+                            @if (status == -2)
+                            {
+                                <div id="password_error" class="invalid-feedback" style="display: block">
+                                    <span>Неверный пароль.</span>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input name="stay" type="checkbox" class="form-check-input" id="exampleCheck1">
+                            <label class="form-check-label" for="exampleCheck1">Оставаться в системе</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 180px;">Войти</button>
+                    }
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <style>
+        footer {
+            position: fixed; /* Фиксированное положение */
+            left: 0;
+            bottom: 0; /* Левый нижний угол */
+            /*padding: 10px;*/ /* Поля вокруг текста */
+            background-color: white; /* Цвет фона */
+            width: 100%; /* Ширина слоя */
+        }
+    </style>
+    <footer>
+        <p style="margin: 15px">&copy; @DateTime.Now.Year - Демьянчик Илья Сергеевич</p>
+    </footer>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @*@RenderSection("scripts", required: false)*@
+</body>
+</html>

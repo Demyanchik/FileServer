@@ -1,0 +1,296 @@
+﻿@{
+    ViewBag.Title = "Файлы групп";
+    ViewBag.Action = "groups_files";
+    //Layout = "~/Views/Shared/Layout.cshtml";
+}
+
+@using FileSystem;
+@using WebApplication2.Controllers;
+
+@*<div class="jumbotron">
+        <h1>ASP.NET</h1>
+        <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
+        <p><a href="https://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+    </div>*@
+<style>
+    ._pagination {
+        margin: 15px 0 0 0;
+    }
+
+    .item {
+        margin: 0 0 5px 0;
+    }
+</style>
+<div class="card" style="height: 620px">
+    <div class="card-header" style="font-size:16px;">
+        Файлы групп
+    </div>
+    <div class="card-body">
+        <div>
+            @{
+                string back_url = "";
+            }
+
+            @if (!ViewBag.IsRoot)
+            {
+                <div style="height: 20px">
+                    @{
+                        List<BackPage> backPages = ViewBag.BackPages;
+                    }
+                    @for (int i = 0; i < backPages.Count; i++)
+                    {
+                        BackPage page = backPages[i];
+                        <a class="btn" href="@page.Url" style="font-size:18px">
+                            @page.Name
+                        </a>
+                        <i class="bi bi-chevron-right"></i>
+
+                        if (i == backPages.Count - 1)
+                        {
+                            back_url = page.Url;
+                        }
+                    }
+                </div>
+                        }
+            <div style="height: 20px; margin: 15px 25px;">
+                <div>
+                    @if (!ViewBag.IsRoot)
+                    {
+                        <a href="@back_url" class="btn">
+                            <i class="bi bi-arrow-left"></i>
+                        </a>
+                    }
+                    <span style="font-size:22px; font-weight: bold">@ViewBag.CurrentPage</span>
+                </div>
+            </div>
+
+            <div class="modal fade" id="SharedLink" tabindex="-1" aria-labelledby="RenameLabel" aria-hidden="true">
+                <style>
+                    .modal-backdrop {
+                        z-index: 0;
+                    }
+                </style>
+                <div class="modal-dialog modal-dialog-centered">
+                    <style>
+                        .modal_borders {
+                            border: none;
+                        }
+                    </style>
+                    <div class="modal-content">
+                        @using (Html.BeginForm("CloseLink", "Home", FormMethod.Post))
+                        {
+                            <div class="modal-header modal_borders">
+                                <h5 class="modal-title" id="ShareLabel">Общедоступная ссылка:</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div>
+                                    <div id="share_body_link" style="height: 50px;">
+                                        <div style="margin: 10px" class="row">
+                                            <input type="hidden" name="catchall" value="@ViewBag.path" />
+
+                                            <div class="row">
+                                                <input type="text" name="link_url" class="form-control col" id="shared_link_value" value="link" disabled />
+                                                <div class="col-1">
+                                                    @*<input type="hidden" name="user" id="link_modal_user" value="user" />
+                                                    <input type="hidden" name="path" id="link_modal_path" value="path" />
+                                                    <input type="hidden" name="type" id="link_modal_type" value="type" />*@
+
+                                                    <button class="btn btn-primary" type="button" onclick="CopyToClipboard(document.getElementById('shared_link_value'))">
+                                                        <i class="bi bi-back"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer modal_borders">
+                                <button type="submit" class="btn btn-primary" onclick="$('#shared_link_value').removeAttr('disabled')">Отключить общий доступ</button>
+                            </div>
+
+                        }
+
+                    </div>
+                </div>
+            </div>
+            <div class="overflow-auto" style="height: @(ViewBag.IsRoot ? "430px" : "410px"); padding: 10px 15px 10px 15px; margin: 5px 0px 0px 0px">
+                @{
+                    List<Item> items = ViewBag.folder;
+                    bool tag_opened = false;
+
+                    @Scripts.Render("~/Scripts/MyScripts/file_menu.js")
+                    for (int i = 0; i < items.Count; i++)
+                    {
+                        if (i % 10 == 0)
+                        {
+                            if (tag_opened)
+                            {
+                            @:</div>
+                        }
+                        @:<div class="row">
+                            tag_opened = true;
+                        }
+                        @:<div class="col-md-1" style="margin: 0 18px 0 0">
+                            <div class="btn item">
+
+                                <div onclick="groups_item_click('@items[i].ShortedName',
+                                    '@items[i].Name',
+                                    '@items[i].Type',
+                                    '@items[i].Partial_path',
+                                    '@Request.QueryString');
+                                    link_modal('@ViewBag.login', '@items[i].Partial_path', '@items[i].Type')
+                                    file_info('@items[i].Name', '@items[i].Size', '@items[i].LastChange')">
+                                    <img src="~/icons/48px/@items[i].Icon.Name" />
+                                    <div class="_progress">
+                                        <span style="display: inline-block; width: 80px; font-size:12px">@items[i].ShortedName</span>
+                                    </div>
+
+                                </div>
+
+                                @{
+
+                                }
+                                @if (items[i].IsSharedLink)
+                                {
+                                    <button class="btn top-0 start-50 translate-middle badge rounded-pill bg-info"
+                                            style="margin: 0px 0px 0px 25px"
+                                            data-bs-toggle="modal" data-bs-target="#SharedLink"
+                                            onclick="show_file_menu('@items[i].ShortedName'); set_link('@items[i].SharedLink') ">
+                                        <i class="bi bi-link"></i>
+                                    </button>
+                                }
+                            </div>
+                        @:</div>
+                    }
+
+                }
+            </div>
+        </div>
+
+        <div class="row" style="margin: 0px">
+            <div class="row col-8">
+                @{
+                    bool? write_mode = (bool?)ViewBag.write_mode;
+                    if (write_mode != null && write_mode == true)
+                    {
+                        <button class="btn btn-outline-primary col-4" data-bs-toggle="modal" data-bs-target="#NewFolder"
+                                onclick="file_menu_background()">
+                            <i class="bi bi-folder"></i>
+                            <span class="spans">Создать папку</span>
+                        </button>
+                        <button class="btn btn-primary" style="width: 300px; margin: 0px 5px;" onclick="$('#upload_to_groups').click()">
+                            <i class="bi bi-upload"></i>
+                            <span class="spans">Загрузить в текущую папку</span>
+                        </button>
+                    }
+                }
+
+                <div class="col-1"></div>
+                <style>
+                    .file_input {
+                        visibility: collapse;
+                        width: 0px;
+                        height: 0px;
+                    }
+                </style>
+                @using (Html.BeginForm("UploadToGroups", "Home", FormMethod.Post, new { @class = "file_input", enctype = "multipart/form-data" }))
+                {
+                    <input type="hidden" name="path" value="@ViewBag.path" />
+
+                    <input type="hidden" name="file_root" value="@ViewBag.file_root" />
+
+                    <input type="hidden" name="root_parm" value="@ViewBag.root_parm" />
+                    <input type="hidden" name="catchall_parm" value="@ViewBag.catchall_parm" />
+
+                    <input type="file" id="upload_to_groups" name="upload" />
+
+                    <input type="submit" id="groups_file_submit" />
+                }
+                <script>
+                    document.getElementById("upload_to_groups").onchange = function () {
+                        document.getElementById("groups_file_submit").click();
+                    };
+                </script>
+            </div>
+            <div class="row col-4">
+                <style>
+                    /*.texting {
+                        .font
+                    }*/
+                </style>
+                <div class="col">
+                    <span style="font-size: 20px; font-weight: bold">Владелец:</span>
+                    <span class="col-7" style="font-size: 20px; font-style: italic; margin: 0px 10px">@ViewBag.group_owner</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="NewFolder" tabindex="-1" aria-hidden="true">
+            <style>
+                .modal-backdrop {
+                    z-index: 0;
+                }
+            </style>
+            <div class="modal-dialog modal-dialog-centered">
+                <style>
+                    .modal_borders {
+                        border: none;
+                    }
+                </style>
+                <div class="modal-content">
+                    @using (Html.BeginForm("NewFolder", "Home", FormMethod.Post))
+                    {
+                        <div class="modal-header modal_borders">
+                            <h5 class="modal-title" id="RenameLabel">Создать папку:</h5>
+                            <button type="button" onclick="file_menu_foreground()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <input type="hidden" name="file_root" value="@ViewBag.file_root" />
+
+                            <input type="hidden" name="root_parm" value="@ViewBag.root_parm" />
+                            <input type="hidden" name="catchall_parm" value="@ViewBag.catchall_parm" />
+
+                            <input type="hidden" name="catchall" value="@ViewBag.path" />
+                            <input name="folder" class="form-control" placeholder="Имя папки" style="width: 100%; max-width: 500px" type="text" />
+                        </div>
+                        <div class="modal-footer modal_borders">
+                            <button class="btn btn-primary">Создать</button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@*</div>*@
+
+@*<button type="button" class="btn btn-primary" id="liveToastBtn" onclick="$('.toast').toast('show');">Show live toast</button>*@
+
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <div id="liveToast" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong class="me-auto">Загрузка не выполнена</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close" onclick="$('.toast').hide()"></button>
+        </div>
+        <div class="toast-body">
+            <span>@TempData["toast_message"]</span>
+        </div>
+    </div>
+</div>
+
+@section footer{
+    <style>
+        footer {
+            position: fixed; /* Фиксированное положение */
+            left: 0;
+            bottom: 0; /* Левый нижний угол */
+            /*padding: 10px;*/ /* Поля вокруг текста */
+            background: #e3f2fd; /* Цвет фона */
+            width: 100%; /* Ширина слоя */
+        }
+    </style>
+    <footer>
+        <p style="margin: 15px">&copy; @DateTime.Now.Year - Демьянчик Илья Сергеевич</p>
+    </footer>
+}

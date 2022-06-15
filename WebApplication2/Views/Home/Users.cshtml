@@ -1,0 +1,306 @@
+﻿
+@{
+    ViewBag.Title = "Пользователи";
+    ViewBag.Action = "users";
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    ._pagination {
+        margin: 15px 0 0 0;
+    }
+
+    .item {
+        margin: 0 0 5px 0;
+    }
+</style>
+<div class="card" style="height: 620px">
+    <div class="card-header" style="font-size:16px;">
+        <span>Пользователи</span>
+    </div>
+    <div class="card-body">
+        <div>
+            <div style="height: 490px; padding: 0px 15px 10px 15px ">
+                <div class="card bg-light">
+                    @using WebApplication2.Models;
+                    @{
+                        List<Users> users = ViewBag.users;
+                        int i = 1;
+
+                        List<Groups> all_groups = ViewBag.all_groups;
+
+                        bool contains(string group_name, ICollection<UserGroups> userGroups, out bool write_mode)
+                        {
+                            foreach (var user_group in userGroups)
+                            {
+                                if (user_group.user_group.Equals(group_name))
+                                {
+                                    if (user_group.C_writable == null)
+                                        write_mode = false;
+                                    else
+                                        write_mode = (bool)user_group.C_writable;
+                                    return true;
+                                }
+                            }
+
+                            write_mode = false;
+                            return false;
+                        }
+
+
+                    }
+                    <div class="card-body" style="padding: 5px 20px;">
+                        @using (Html.BeginForm("CreateUser", "Home", FormMethod.Post))
+                        {
+                            <style>
+                                .inputs {
+                                    margin: 5px 5px 5px 0px;
+                                }
+
+                                .groups {
+                                    width: 200px;
+                                    height: 150px;
+                                    padding: 5px 5px 5px 15px;
+                                }
+                            </style>
+                            <fieldset>
+                                @*<legend>Создание пользователя</legend>*@
+                                <script>
+                                    function CheckUsers(user, invalid, disable) {
+                                        $.get('http://localhost:44318/Home/CheckUsers', { user: user }, function (data) {
+
+                                            if (data < 0)
+                                            {
+                                                $(invalid).addClass('is-invalid');
+                                                $(invalid).attr('title', 'Пользователь с таким логином уже существует.');
+                                                $(disable).addClass('disabled');
+                                            }
+                                            else
+                                            {
+                                                $(invalid).removeClass('is-invalid');
+                                                $(invalid).removeAttr('title');
+                                                $(disable).removeClass('disabled');
+                                            }
+                                        });
+                                    }
+                                </script>
+                                <div class="row">
+                                    <input id="create_user_login" class="form-control col inputs" name="login" placeholder="Логин" type="text" required
+                                           onchange="CheckUsers(this.value, this, '#create_user')"/>
+                                    <input class="form-control col inputs" name="password" placeholder="Пароль" type="password" required />
+                                    <input class="form-control col inputs" name="fullname" placeholder="Полное имя" type="text" required />
+
+                                    <div class="dropdown col inputs" style="padding: 0px;">
+                                        <button class="btn btn-secondary dropdown-toggle" style="width: 200px;" type="button" onclick='$("#new_user_groups").toggle()' data-bs-toggle="dropdown" aria-expanded="false">
+                                            <span>Группы</span>
+                                        </button>
+                                        <ul class="dropdown-menu groups overflow-auto" id="new_user_groups" style="font-size: 14px">
+                                            @{ int j = 1;}
+                                            @foreach (var group in all_groups)
+                                            {
+                                                <li>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" name="@("group" + j++)" value="@group.group_name" id="flexCheckChecked">
+                                                        <label class="form-check-label" for="flexCheckChecked">
+                                                            @group.group_name
+                                                        </label>
+                                                    </div>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </div>
+
+                                    <input id="create_user" class="form-control col inputs btn-outline-primary" type="submit" value="Создать" />
+                                </div>
+
+                            </fieldset>
+                        }
+                    </div>
+                </div>
+                @Scripts.Render("~/Scripts/MyScripts/users.js")
+                @using (Html.BeginForm("UpdateUsers", "Home", FormMethod.Post))
+                {
+                    <div class="overflow-auto" style="height: 400px; margin: 15px 0px 0px 0px">
+                        <style>
+                            .headers {
+                                padding: 0px 10px;
+                            }
+                        </style>
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col"><span class="headers">Логин</span></th>
+                                    <th scope="col"><span class="headers">Пароль</span></th>
+                                    <th scope="col"><span class="headers">Полное имя</span></th>
+                                    <th scope="col"><span class="headers">Группы</span></th>
+                                    <th scope="col"><span class="headers">Квота</span></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var user in users)
+                                {
+                                    <tr>
+                                        <th scope="row" style="padding: 10px">@i</th>
+                                        <td>
+                                            <input type="hidden" name="@("id" + i)" value=@user.id />
+                                            <input class="form-control border-0 disabled" type="text" value=@user.login name=@($"login{i}_updatable") required
+                                                   onchange="CheckUsers(this.value, this, '#save_changes')"/>
+                                        </td>
+                                        <td>
+                                            <input class="form-control border-0" type="password" value=@user.password name=@("password" + i) required/>
+                                        </td>
+                                        <td>
+                                            <input class="form-control border-0" type="text" value="@user.fullname" name=@("fullname" + i) required/>
+                                        </td>
+                                        <td>
+                                            <div class="dropdown" style="padding: 0px;">
+                                                <button class="btn btn-secondary dropdown-toggle" style="width: 200px;" type="button" onclick='$(@("groups" + i)).toggle()' data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <span>Группы</span>
+                                                </button>
+                                                <ul class="dropdown-menu groups overflow-auto" id="@("groups" + i)" style="font-size: 14px">
+
+                                                    @{
+                                                        int j = 1;
+                                                    }
+                                                    @foreach (var group in all_groups)
+                                                    {
+
+                                                        <li>
+                                                            <div class="form-check">
+                                                                @{
+                                                                    bool write_mode;
+                                                                    <input class="form-check-input" type="checkbox" name=@($"users{i}_group{j}") value="@group.group_name" id="flexCheckChecked" @(contains(group.group_name, user.UserGroups, out write_mode) ? "checked" : "")>
+                                                                    <input type="hidden" name=@($"users{i}_group{j++}_write_mode") @($"value={write_mode.ToString()}") />
+                                                                }
+                                                                <label class="form-check-label" for="flexCheckChecked">
+                                                                    @group.group_name
+                                                                </label>
+                                                            </div>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div>
+                                                @{ 
+                                                    string SetSelected(double k)
+                                                    {
+                                                        int option_mb = (int) k * 1024;
+                                                        if (user.quota_max == option_mb)
+                                                            return "selected";
+                                                        else
+                                                            return "";
+                                                    }
+                                                }
+                                                <select class="form-select" name="@("quota" + i)" style="width: 180px">
+                                                    <option @SetSelected(0.5)>По умолчанию</option>
+                                                    <option @SetSelected(1)>1Gb</option>
+                                                    <option @SetSelected(2)>2Gb</option>
+                                                    <option @SetSelected(5)>5Gb</option>
+                                                    <option @SetSelected(10)>10Gb</option>
+                                                </select>
+                                            </div>
+                                            @*<div class="dropdown" style="padding: 0px;">
+                                                <button class="btn btn-secondary dropdown-toggle" style="width: 200px;" type="button" onclick='$(@("quotas" + i)).toggle()' data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <span>По умолчанию</span>
+                                                </button>
+                                                <div class="dropdown-menu groups overflow-auto" id="@("quotas" + i)" style="font-size: 14px">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+                                                        <label class="form-check-label" for="flexRadioDefault1">
+                                                            Default radio
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
+                                                        <label class="form-check-label" for="flexRadioDefault2">
+                                                            Default checked radio
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>*@
+                                        </td>
+                                        <td>
+                                            <button type="button" class="form-control" data-bs-toggle="modal" data-bs-target="#DeleteUserModal"
+                                                    onclick="DeleteUserShow('@user.login')" style="width: 150px" name=@("delete" + i)
+                                                    @(((string)ViewBag.login).Equals(user.login)?"disabled":"")>
+                                                Удалить
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    i += 1;
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row" style="margin: 15px 0px">
+                        <button id="save_changes" class="form-control btn-outline-primary" style="width: 220px" type="submit" name="press">Сохранить изменения</button>
+                    </div>
+                }
+
+                @using (Html.BeginForm("DeleteUser", "Home", FormMethod.Post))
+                {
+                    <input id="delete_login" type="hidden" name="login" value="" />
+
+                    <div class="modal fade" id="DeleteUserModal" tabindex="-1" aria-labelledby="ShareLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <style>
+                                .modal_borders {
+                                    border: none;
+                                }
+
+                                .modal_body {
+                                    height: 200px;
+                                }
+                            </style>
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="ShareLabel">Удаление пользователя</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                                            onclick="DeleteUserClose()"></button>
+                                </div>
+                                <div class="modal-body modal_body">
+                                    <h4>Вы действительно хотите удалить пользователя - <span id="delete_login_span">User</span>?</h4>
+                                    <div class="form-check" style="margin: 30px 0px">
+                                        <input class="form-check-input" type="checkbox" name="remove_files" id="remove_files_checkbox">
+                                        <label class="form-check-label" for="remove_files_checkbox">
+                                            Удалить все файлы пользователя без возможности восстановления
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="modal-footer modal_borders">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                                            onclick="DeleteUserClose()">
+                                        Закрыть
+                                    </button>
+                                    <button type="submit" class="btn btn-primary">Удалить пользователя</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section footer{
+    <style>
+        footer {
+            position: fixed; /* Фиксированное положение */
+            left: 0;
+            bottom: 0; /* Левый нижний угол */
+            /*padding: 10px;*/ /* Поля вокруг текста */
+            background: #e3f2fd; /* Цвет фона */
+            width: 100%; /* Ширина слоя */
+        }
+    </style>
+    <footer>
+        <p style="margin: 15px">&copy; @DateTime.Now.Year - Демьянчик Илья Сергеевич</p>
+    </footer>
+}
+

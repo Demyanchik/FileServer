@@ -1,0 +1,110 @@
+﻿@{
+    ViewBag.Title = "Общий доступ";
+    Layout = "~/Views/Shared/Shared_Layout.cshtml";
+}
+@using FileSystem;
+
+<div class="container body-content">
+    <div class="row">
+        <div class="col-8">
+            <div class="card" style="height: 520px;">
+                <h5 class="card-header" style="font-size:16px;">Общий доступ</h5>
+                @if ((bool)ViewBag.Found)
+                {
+                    Item item = ViewBag.Item;
+
+                    <div class="card-body" style="display: block">
+                        <div class="container body-content" style="margin: 10px;">
+                            <div class="row">
+                                <div class="col-5">
+                                    <img src="/icons/512px/@item.Icon.Name" height="300" />
+                                    <div style="margin: 15px 0px ;width: 300px">
+                                        <center><h4>@item.Name</h4></center>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="row">
+                                        <h4>Владелец: <span>@ViewBag.Owner</span></h4>
+                                    </div>
+                                    <div class="row">
+                                        <h4>Размер: <span>@ViewBag.Size</span></h4>
+                                    </div>
+                                    <div class="row">
+                                        <h4>Изменен: <span>@ViewBag.Changed</span></h4>
+                                    </div>
+                                    <div class="row" style="margin: 80px 0px">
+
+                                        @using (Html.BeginForm("SaveToDownloads", "Home", FormMethod.Post))
+                                        {
+                                            if (ViewBag.Authorized)
+                                            {
+                                                <div class="row" style="margin: 5px 0px">
+                                                    <button class="btn btn-secondary" style="width: 250px">
+                                                        <i class="bi bi-cloud-check"></i>
+                                                        <span style="margin: 5px 5px">Сохранить в FileServer</span>
+                                                    </button>
+                                                </div>
+                                                <input type="hidden" name="code" value="@Request.QueryString["code"]" />
+                                                <input type="hidden" name="type" value="@item.Type" />
+                                            }
+
+
+                                        }
+                                        @using (Html.BeginForm("DownloadFromLink", "Home", FormMethod.Post))
+                                        {
+                                            <input type="hidden" name="code" value="@Request.QueryString["code"]" />
+                                            <input type="hidden" name="type" value="@item.Type" />
+
+                                            <div class="row" style="margin: 5px 0px">
+                                                <button class="btn btn-primary" style="width: 250px"
+                                                        type="submit">
+                                                    <i class="bi bi-download"></i>
+                                                    <span style="margin: 5px 5px">Скачать</span>
+                                                </button>
+                                            </div>
+                                        }
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                }
+                else
+                {
+                    <div class="card-body">
+                        <div class="container body-content" style="margin: 10px;">
+                            <h1>Файл не найден.</h1>
+                            <div>
+                                <p style="font-size: 20px">Ссылка недействительна, либо такого файла или папки не существует.</p>
+                                <p style="font-size: 20px; margin: 30px auto 0px auto;">Такое может произойти по одной из следующих причин:
+                                    <ul style="font-size:18px; margin: 10px auto;">
+                                        <li>Ссылка не является валидной.</li>
+                                        <li>Владелец закрыл доступ к ресурсу.</li>
+                                        <li>Ресурс был удален.</li>
+                                    </ul>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+@section footer{
+    <style>
+        footer {
+            position: fixed; /* Фиксированное положение */
+            left: 0;
+            bottom: 0; /* Левый нижний угол */
+            /*padding: 10px;*/ /* Поля вокруг текста */
+            background: #e3f2fd; /* Цвет фона */
+            width: 100%; /* Ширина слоя */
+        }
+    </style>
+    <footer>
+        <p style="margin: 15px">&copy; @DateTime.Now.Year - Демьянчик Илья Сергеевич</p>
+    </footer>
+}

@@ -1,0 +1,122 @@
+﻿@{
+    ViewBag.Title = "Файлы";
+    ViewBag.Action = "index";
+    //Layout = "~/Views/Shared/Layout.cshtml";
+}
+
+@using FileSystem;
+@using WebApplication2.Controllers;
+
+@*<div class="jumbotron">
+        <h1>ASP.NET</h1>
+        <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
+        <p><a href="https://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+    </div>*@
+<style>
+    ._pagination {
+        margin: 15px 0 0 0;
+    }
+
+    .item {
+        margin: 0 0 5px 0;
+    }
+</style>
+<div class="card" style="height: 620px">
+    <div class="card-header" style="font-size:16px;">
+        Поделились с вами
+    </div>
+    <div class="card-body">
+        <div>
+            <ul class="nav nav-tabs">
+                @*<li class="nav-item">
+                <button id="share_button_user" class="nav-link active" onclick="switch_tab('user')">Пользователю</button>
+            </li>
+            <li class="nav-item">
+                <button id="share_button_group" class="nav-link" onclick="switch_tab('group')">Группе</button>
+            </li>*@
+                <li class="nav-item">
+                    <button type="button" id="share_button_link" class="nav-link" onclick="switch_tab('link')">Ссылкой</button>
+                </li>
+            </ul>
+            <div id="share_body_user" style="height: 400px; display: none">user</div>
+            <div id="share_body_group" style="height: 400px; display: none">group</div>
+            <div id="share_body_link" style="height: 100px;">
+                <div style="margin: 10px" class="row">
+                    <input type="hidden" id="link_filename" />
+                    <input type="hidden" name="catchall" value="@ViewBag.path" />
+
+                    <div class="row">
+                        <input type="text" name="link_url" class="form-control col" id="link_value" value="link" disabled />
+                        <script>
+                            function CopyToClipboard(el) {
+                                /* Get the text field */
+                                var copyText = el;
+
+                                /* Select the text field */
+                                copyText.select();
+
+                                /* Copy the text inside the text field */
+                                document.execCommand("copy");
+
+                                /* Alert the copied text */
+                                navigator.clipboard.writeText('').then(function () {
+                                    /* clipboard successfully set */
+                                }, function () {
+                                    /* clipboard write failed */
+                                });
+
+                                navigator.clipboard.writeText(copyText.value).then(function () {
+                                    /* clipboard successfully set */
+                                }, function () {
+                                    alert('copy error');
+                                    /* clipboard write failed */
+                                });
+                            }
+
+                        </script>
+                        <div class="col-1">
+                            <input type="hidden" name="user" id="link_modal_user" value="user" />
+                            <input type="hidden" name="path" id="link_modal_path" value="path" />
+                            <input type="hidden" name="type" id="link_modal_type" value="type" />
+
+                            <button class="btn btn-primary" type="button" onclick="CopyToClipboard(document.getElementById('link_value'))">
+                                <i class="bi bi-back"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@*</div>*@
+
+@*<button type="button" class="btn btn-primary" id="liveToastBtn" onclick="$('.toast').toast('show');">Show live toast</button>*@
+
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <div id="liveToast" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong class="me-auto">Загрузка не выполнена</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close" onclick="$('.toast').hide()"></button>
+        </div>
+        <div class="toast-body">
+            <span>@TempData["toast_message"]</span>
+        </div>
+    </div>
+</div>
+
+@section footer{
+    <style>
+        footer {
+            position: fixed; /* Фиксированное положение */
+            left: 0;
+            bottom: 0; /* Левый нижний угол */
+            /*padding: 10px;*/ /* Поля вокруг текста */
+            background: #e3f2fd; /* Цвет фона */
+            width: 100%; /* Ширина слоя */
+        }
+    </style>
+    <footer>
+        <p style="margin: 15px">&copy; @DateTime.Now.Year - Демьянчик Илья Сергеевич</p>
+    </footer>
+}

@@ -1,0 +1,391 @@
+﻿@{
+    ViewBag.Title = "Группы";
+    ViewBag.Action = "groups_files";
+    //Layout = "~/Views/Shared/Layout.cshtml";
+}
+
+@using FileSystem;
+@using WebApplication2.Controllers;
+@using WebApplication2.Models;
+@using WebApplication2.Classes;
+
+@Scripts.Render("~/Scripts/MyScripts/file_menu.js")
+@Scripts.Render("~/Scripts/MyScripts/groups.js")
+@{
+    PvI_KP_Entities context = ViewBag.MyContext;
+}
+<style>
+    ._pagination {
+        margin: 15px 0 0 0;
+    }
+
+    .item {
+        margin: 0 0 5px 0;
+    }
+</style>
+<div class="card" style="height: 620px">
+    <div class="card-header" style="font-size:16px;">
+        Файлы групп
+    </div>
+    <div class="card-body">
+        <div>
+            <div style="height: 490px; padding: 0px 15px 10px 15px ">
+                <div style="height: 30px; margin: 0px 0px 15px 0px;">
+                    <div>
+                        <span style="font-size:22px; font-weight: bold">Создание группы:</span>
+                    </div>
+                </div>
+                <div class="card bg-light" style="width: 800px">
+                    <div class="card-body" style="padding: 5px 20px;">
+                        @using (Html.BeginForm("CreateGroup", "Home", FormMethod.Post))
+                        {
+                            <style>
+                                .inputs {
+                                    margin: 5px 5px 5px 0px;
+                                }
+
+                                .groups {
+                                    width: 200px;
+                                    height: 150px;
+                                    padding: 5px 5px 5px 15px;
+                                }
+                            </style>
+                            @*<span style="font-size:22px; font-weight: bold">Создание группы:</span>*@
+                    <div class="row">
+                        <input class="form-control col inputs" name="name" placeholder="Имя группы" type="text" required
+                               onchange="CheckGroups(this.value, this, '#create_group')" />
+
+                        <div class="dropdown col inputs" style="padding: 0px;">
+                            <button class="btn btn-secondary dropdown-toggle" style="width: 300px;" type="button" onclick='$("#members").toggle()' data-bs-toggle="dropdown" aria-expanded="false">
+                                <span>Участники</span>
+                            </button>
+                            <ul class="dropdown-menu groups overflow-auto" id="members" style="font-size: 14px; width: 300px">
+                                @{
+                                    int i = 1;
+                                }
+                                @foreach (Users user in ViewBag.OpenUsers)
+                                {
+                                    <li>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="@("user" + i++)" value="@user.id" id="flexCheckChecked">
+                                            <label class="form-check-label" for="flexCheckChecked">
+                                                @user.fullname
+                                            </label>
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+
+                        <input name="owner_id" type="hidden" value="@(((Users)ViewBag.userInfo).id)" />
+                        <input name="users_count" type="hidden" value="@(((List<Users>)ViewBag.OpenUsers).Count)" />
+
+                        <input id="create_group" class="form-control col inputs btn-outline-primary" type="submit" value="Создать" />
+                    </div>
+                                    }
+                    </div>
+
+                </div>
+                <div style="height: 30px; margin: 15px 0px 0px 0px;">
+                    <div>
+                        <span style="font-size:22px; font-weight: bold">Группы, к которым имеется доступ:</span>
+                    </div>
+                </div>
+                <div class="overflow-auto row bg-light" style="height: 380px; margin: 15px 0px 0px 0px; padding: 10px 0px 0px 0px">
+                    <style>
+                        .group {
+                            margin: 0px 0px 20px 0px;
+                        }
+
+                        ._card {
+                            height: 200px;
+                        }
+
+                        .pad {
+                            padding: 10px 0px 0px 5px;
+                        }
+
+                        ._att {
+                            font-size: 18px;
+                            font-style: italic;
+                        }
+
+                        ._names {
+                            font-size: 18px;
+                            font-weight: bold;
+                        }
+
+                        .rows_pad {
+                            padding: 5px;
+                        }
+                    </style>
+                    @{
+                        int counter = 0;
+                        List<List<UsersInGroup>> list_list = ViewBag.UsersInGroupView;
+                    }
+                    @foreach (Groups grp in ViewBag.UsersGroups)
+                    {
+                        <div class="col-md-4 group">
+                            <div class="card _card btn">
+                                <div class="card-body">
+                                    <div class="row rows_pad">
+                                        <div class="col-md-4 btn-outline-primary" onclick="go_to_a('@grp.group_name')">
+                                            <img src="~/icons/48px/folder.png">
+                                        </div>
+                                        <div class="col-md-6" style="align-content: center">
+                                            <span class="_names">@grp.group_name</span>
+                                        </div>
+                                        <div class="col-md-2" style="align-content: center">
+                                            @{
+                                                Users userInfo = ViewBag.userInfo;
+                                                if (grp.owner_id == userInfo.id)
+                                                {
+                                                    <button onclick="file_menu_background()" class="dropdown-item" style="padding: 5px; width: 40px" data-bs-toggle="modal" data-bs-target="@("#Settings" + counter.ToString())">
+                                                        <svg style="zoom: 1.5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear" viewBox="0 0 16 16">
+                                                            <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z" />
+                                                            <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z" />
+                                                        </svg>
+                                                    </button>
+                                                }
+                                                else
+                                                {
+                                                    <button onclick="file_menu_background()" class="dropdown-item" style="padding: 5px; width: 40px" data-bs-toggle="modal" data-bs-target="@("#Leave" + counter.ToString())">
+                                                        <svg style="zoom: 1.5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-in-right" viewBox="0 0 16 16">
+                                                            <path fill-rule="evenodd" d="M6 3.5a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 0-1 0v2A1.5 1.5 0 0 0 6.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-8A1.5 1.5 0 0 0 5 3.5v2a.5.5 0 0 0 1 0v-2z" />
+                                                            <path fill-rule="evenodd" d="M11.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H1.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z" />
+                                                        </svg>
+                                                    </button>
+                                                }
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="row rows_pad">
+                                        <div class="col-md-4">
+                                            <span class="_att">Владелец:</span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <span class="_names">@HomeController.getOwnerName(context, grp.owner_id)</span>
+                                        </div>
+                                    </div>
+                                    <div class="row rows_pad">
+                                        <div class="col-md-4">
+                                            <span class="_att">Дата создания:</span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <span class="_names">@grp.created</span>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="modal fade" id="Settings@(counter)" tabindex="-1" aria-hidden="true">
+                                        <style>
+                                            .modal-backdrop {
+                                                z-index: 0;
+                                            }
+                                        </style>
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <style>
+                                                .modal_borders {
+                                                    border: none;
+                                                }
+                                            </style>
+                                            <div class="modal-content">
+                                                @using (Html.BeginForm("UpdateGroup", "Home", FormMethod.Post, new { id = "update_group" + counter, onsubmit = "SubmitCheck(this, '" + grp.group_name + "');return false;" }))
+                                                {
+                                                    <input type="hidden" name="group_name" value="@grp.group_name">
+                                                    <input type="hidden" name="users_count" value="@list_list[counter].Count" />
+                                                    <div class="modal-header modal_borders">
+                                                        <h5 class="modal-title" id="RenameLabel">Настройки группы <span style="font-style: italic">«@grp.group_name»</span>:</h5>
+                                                        <button type="button" onclick="file_menu_foreground()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body" style="height: 400px">
+                                                        <style>
+                                                            .chapters {
+                                                                font-size: 18px;
+                                                                font-style: italic;
+                                                                font-weight: bold;
+                                                            }
+
+                                                            .for_text {
+                                                                padding: 7px;
+                                                            }
+
+                                                            .margs {
+                                                                margin: 0px 0px 15px 0px;
+                                                            }
+
+                                                            .weight {
+                                                                font-weight: bold;
+                                                            }
+
+                                                            .rename {
+                                                                font-size: 18px;
+                                                                vertical-align: central;
+                                                            }
+                                                        </style>
+                                                        <div class="row">
+                                                            <span class="col-8 chapters">Управление участниками:</span>
+                                                            <div class="col-4"></div>
+                                                        </div>
+                                                        <div class="overflow-auto" style="height: 250px; padding: 15px">
+                                                            @{
+                                                                int users_i = 1;
+                                                            }
+                                                            @foreach (var user in list_list[counter])
+                                                            {
+                                                                <div class="row @(user.userId==((Users)ViewBag.userInfo).id?"disabled":"")" style="margin: 0px; padding: 5px 0px;">
+                                                                    <div class="col-1">
+                                                                        <input class="form-check-input" style="margin: 12px 5px;" type="checkbox" name="user@(users_i)" value="@user.userId" @(user.isMember ? "checked" : "")>
+                                                                    </div>
+                                                                    <label class="form-check-label col-4 for_text" for="flexCheckChecked">
+                                                                        @user.fullname
+                                                                    </label>
+                                                                    <label class="form-check-label col-3 for_text">
+                                                                        доступ:
+                                                                    </label>
+                                                                    <select class="form-select col-1" name="@("write_mode" + users_i)" style="width: 120px">
+                                                                        <option @(user.writable ? "" : "selected")>Чтение</option>
+                                                                        <option @(user.writable ? "selected" : "")>Чтение/Запись</option>
+                                                                    </select>
+                                                                </div>
+
+                                                                users_i++;
+                                                            }
+                                                        </div>
+                                                        <div class="row" style="padding: 20px 10px 10px 10px">
+                                                            <span class="col-6 chapters">Управление группой:</span>
+                                                            <div class="col-6"></div>
+                                                        </div>
+                                                        <div class="row" style="padding: 0px 20px;">
+                                                            <div class="col-5 rename">Название группы:</div>
+                                                            <div class="col-7">
+                                                                <input class="form-control" name="new_name" placeholder="Название" type="text" value="@grp.group_name" required />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer modal_borders">
+                                                        @*<input id="delete_group@(counter)" type="submit" style="visibility: hidden" name="press" value="Удалить" />*@
+                                                        <input type="submit" class="btn btn-primary" onclick="this.form.submited=this.value;" @*onclick="DeleteGroup('@grp.group_name', '#update_group@(counter)')"*@ value="Удалить группу" />
+                                                        <input type="submit" class="btn btn-primary" onclick="this.form.submited=this.value;" value="Сохранить изменения">
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal fade" id="Leave@(counter)" tabindex="-1" aria-hidden="true">
+                                        <style>
+                                            .modal-backdrop {
+                                                z-index: 0;
+                                            }
+                                        </style>
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <style>
+                                                .modal_borders {
+                                                    border: none;
+                                                }
+                                            </style>
+                                            <div class="modal-content">
+                                                @using (Html.BeginForm("LeaveGroup", "Home", FormMethod.Post, new { id = "leave_group" + counter }))
+                                                {
+                                                    <input type="hidden" name="group_name" value="@grp.group_name">
+
+                                                    <div class="modal-header modal_borders">
+                                                        <h5 class="modal-title" id="RenameLabel">Выход из группы <span style="font-style: italic">«@grp.group_name»</span>:</h5>
+                                                        <button type="button" onclick="file_menu_foreground()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <style>
+                                                            .chapters {
+                                                                font-size: 18px;
+                                                                font-style: italic;
+                                                                font-weight: bold;
+                                                            }
+
+                                                            .for_text {
+                                                                padding: 7px;
+                                                            }
+
+                                                            .margs {
+                                                                margin: 0px 0px 15px 0px;
+                                                            }
+
+                                                            .weight {
+                                                                font-weight: bold;
+                                                            }
+
+                                                            .rename {
+                                                                font-size: 18px;
+                                                                vertical-align: central;
+                                                            }
+                                                        </style>
+                                                        <div>
+                                                            <h4>
+                                                                Вы действительно хотите покинуть группу <span style="font-style: italic">«@grp.group_name»</span>?
+                                                            </h4>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer modal_borders">
+                                                        <button type="submit" class="btn btn-primary">Да</button>
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Нет</button>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        counter++;
+                    }
+
+                    @if (((List<Groups>)ViewBag.UsersGroups).Count < 1)
+                    {
+                        <div class="row justify-content-center">
+                            <div class="_card col-md-8 align-self-center">
+                                <h2 style="text-align:center; font-style: italic">
+                                    Нет созданных групп, или групп, к которым получен доступ
+                                </h2>
+                            </div>
+                        </div>
+                    }
+
+                </div>
+            </div>
+
+            @*<fieldset>
+                    <legend><span style="font-size:22px; font-weight: bold">Создание группы:</span></legend>
+                    <div class="row">
+                        <input class="form-control col inputs" name="name" placeholder="Имя группы" type="text" required />
+
+                        <div class="dropdown col inputs" style="padding: 0px;">
+                            <button class="btn btn-secondary dropdown-toggle" style="width: 200px;" type="button" onclick='$("#new_user_groups").toggle()' data-bs-toggle="dropdown" aria-expanded="false">
+                                <span>Группы</span>
+                            </button>
+                            <ul class="dropdown-menu groups overflow-auto" id="new_user_groups" style="font-size: 14px">
+                                хихихи
+                            </ul>
+                        </div>
+
+                        <input id="create_user" class="form-control col inputs btn-outline-primary" type="submit" value="Создать" />
+                    </div>
+                </fieldset>*@
+        </div>
+    </div>
+</div>
+
+@section footer{
+    <style>
+        footer {
+            position: fixed; /* Фиксированное положение */
+            left: 0;
+            bottom: 0; /* Левый нижний угол */
+            /*padding: 10px;*/ /* Поля вокруг текста */
+            background: #e3f2fd; /* Цвет фона */
+            width: 100%; /* Ширина слоя */
+        }
+    </style>
+    <footer>
+        <p style="margin: 15px">&copy; @DateTime.Now.Year - Демьянчик Илья Сергеевич</p>
+    </footer>
+}

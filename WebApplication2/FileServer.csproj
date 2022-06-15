@@ -1,0 +1,653 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{550DB09A-457B-47B5-9154-8700F867211D}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>WebApplication2</RootNamespace>
+    <AssemblyName>WebApplication2</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+    <UseIISExpress>true</UseIISExpress>
+    <Use64BitIISExpress />
+    <IISExpressSSLPort>44318</IISExpressSSLPort>
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=6.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.6.0.0\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.IO.Compression.ZipFile, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.Compression.ZipFile.4.3.0\lib\net46\System.IO.Compression.ZipFile.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Text.Encodings.Web, Version=6.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Text.Encodings.Web.6.0.0\lib\net461\System.Text.Encodings.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Text.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Text.Json.6.0.0\lib\net461\System.Text.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http">
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest">
+    </Reference>
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.7\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Optimization">
+      <HintPath>..\packages\Microsoft.AspNet.Web.Optimization.1.1.3\lib\net40\System.Web.Optimization.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.7\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="WebGrease">
+      <Private>True</Private>
+      <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
+    </Reference>
+    <Reference Include="Antlr3.Runtime">
+      <Private>True</Private>
+      <HintPath>..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform">
+      <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Classes\API.cs" />
+    <Compile Include="Classes\Authorization.cs" />
+    <Compile Include="Classes\CurrentFolder.cs" />
+    <Compile Include="Classes\Encryption.cs" />
+    <Compile Include="Classes\Functions.cs" />
+    <Compile Include="Classes\Groups.cs" />
+    <Compile Include="Classes\Index.cs" />
+    <Compile Include="Classes\Profile.cs" />
+    <Compile Include="Classes\UsersAndGroups.cs" />
+    <Compile Include="Classes\Users.cs" />
+    <Compile Include="Classes\ViewBag.cs" />
+    <Compile Include="Controllers\DP.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Models\FileServers.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Groups.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\History.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Model1.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Model1.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Model1.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Model1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Model1.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Models\RemovedFiles.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Repositories.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Shared.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\SharedLink.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Storage.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\sysdiagrams.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\UserGroups.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Users.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\bootstrap-grid.css" />
+    <Content Include="Content\bootstrap-grid.min.css" />
+    <Content Include="Content\bootstrap-grid.rtl.css" />
+    <Content Include="Content\bootstrap-grid.rtl.min.css" />
+    <Content Include="Content\bootstrap-reboot.css" />
+    <Content Include="Content\bootstrap-reboot.min.css" />
+    <Content Include="Content\bootstrap-reboot.rtl.css" />
+    <Content Include="Content\bootstrap-reboot.rtl.min.css" />
+    <Content Include="Content\bootstrap-utilities.css" />
+    <Content Include="Content\bootstrap-utilities.min.css" />
+    <Content Include="Content\bootstrap-utilities.rtl.css" />
+    <Content Include="Content\bootstrap-utilities.rtl.min.css" />
+    <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\bootstrap.rtl.css" />
+    <Content Include="Content\bootstrap.rtl.min.css" />
+    <Content Include="favicon.ico" />
+    <Content Include="Global.asax" />
+    <Content Include="Content\Site.css" />
+    <Content Include="icons\16px\aac.png" />
+    <Content Include="icons\16px\ai.png" />
+    <Content Include="icons\16px\aiff.png" />
+    <Content Include="icons\16px\avi.png" />
+    <Content Include="icons\16px\bmp.png" />
+    <Content Include="icons\16px\c.png" />
+    <Content Include="icons\16px\cpp.png" />
+    <Content Include="icons\16px\css.png" />
+    <Content Include="icons\16px\csv.png" />
+    <Content Include="icons\16px\dat.png" />
+    <Content Include="icons\16px\dmg.png" />
+    <Content Include="icons\16px\doc.png" />
+    <Content Include="icons\16px\dotx.png" />
+    <Content Include="icons\16px\dwg.png" />
+    <Content Include="icons\16px\dxf.png" />
+    <Content Include="icons\16px\eps.png" />
+    <Content Include="icons\16px\exe.png" />
+    <Content Include="icons\16px\flv.png" />
+    <Content Include="icons\16px\gif.png" />
+    <Content Include="icons\16px\h.png" />
+    <Content Include="icons\16px\hpp.png" />
+    <Content Include="icons\16px\html.png" />
+    <Content Include="icons\16px\ics.png" />
+    <Content Include="icons\16px\iso.png" />
+    <Content Include="icons\16px\java.png" />
+    <Content Include="icons\16px\jpg.png" />
+    <Content Include="icons\16px\js.png" />
+    <Content Include="icons\16px\key.png" />
+    <Content Include="icons\16px\less.png" />
+    <Content Include="icons\16px\mid.png" />
+    <Content Include="icons\16px\mp3.png" />
+    <Content Include="icons\16px\mp4.png" />
+    <Content Include="icons\16px\mpg.png" />
+    <Content Include="icons\16px\odf.png" />
+    <Content Include="icons\16px\ods.png" />
+    <Content Include="icons\16px\odt.png" />
+    <Content Include="icons\16px\otp.png" />
+    <Content Include="icons\16px\ots.png" />
+    <Content Include="icons\16px\ott.png" />
+    <Content Include="icons\16px\pdf.png" />
+    <Content Include="icons\16px\php.png" />
+    <Content Include="icons\16px\png.png" />
+    <Content Include="icons\16px\ppt.png" />
+    <Content Include="icons\16px\psd.png" />
+    <Content Include="icons\16px\py.png" />
+    <Content Include="icons\16px\qt.png" />
+    <Content Include="icons\16px\rar.png" />
+    <Content Include="icons\16px\rb.png" />
+    <Content Include="icons\16px\rtf.png" />
+    <Content Include="icons\16px\sass.png" />
+    <Content Include="icons\16px\scss.png" />
+    <Content Include="icons\16px\sql.png" />
+    <Content Include="icons\16px\tga.png" />
+    <Content Include="icons\16px\tgz.png" />
+    <Content Include="icons\16px\tiff.png" />
+    <Content Include="icons\16px\txt.png" />
+    <Content Include="icons\16px\wav.png" />
+    <Content Include="icons\16px\xls.png" />
+    <Content Include="icons\16px\xlsx.png" />
+    <Content Include="icons\16px\xml.png" />
+    <Content Include="icons\16px\yml.png" />
+    <Content Include="icons\16px\zip.png" />
+    <Content Include="icons\16px\_blank.png" />
+    <Content Include="icons\16px\_page.png" />
+    <Content Include="icons\32px\aac.png" />
+    <Content Include="icons\32px\ai.png" />
+    <Content Include="icons\32px\aiff.png" />
+    <Content Include="icons\32px\avi.png" />
+    <Content Include="icons\32px\bmp.png" />
+    <Content Include="icons\32px\c.png" />
+    <Content Include="icons\32px\cpp.png" />
+    <Content Include="icons\32px\css.png" />
+    <Content Include="icons\32px\csv.png" />
+    <Content Include="icons\32px\dat.png" />
+    <Content Include="icons\32px\dmg.png" />
+    <Content Include="icons\32px\doc.png" />
+    <Content Include="icons\32px\dotx.png" />
+    <Content Include="icons\32px\dwg.png" />
+    <Content Include="icons\32px\dxf.png" />
+    <Content Include="icons\32px\eps.png" />
+    <Content Include="icons\32px\exe.png" />
+    <Content Include="icons\32px\flv.png" />
+    <Content Include="icons\32px\gif.png" />
+    <Content Include="icons\32px\h.png" />
+    <Content Include="icons\32px\hpp.png" />
+    <Content Include="icons\32px\html.png" />
+    <Content Include="icons\32px\ics.png" />
+    <Content Include="icons\32px\iso.png" />
+    <Content Include="icons\32px\java.png" />
+    <Content Include="icons\32px\jpg.png" />
+    <Content Include="icons\32px\js.png" />
+    <Content Include="icons\32px\key.png" />
+    <Content Include="icons\32px\less.png" />
+    <Content Include="icons\32px\mid.png" />
+    <Content Include="icons\32px\mp3.png" />
+    <Content Include="icons\32px\mp4.png" />
+    <Content Include="icons\32px\mpg.png" />
+    <Content Include="icons\32px\odf.png" />
+    <Content Include="icons\32px\ods.png" />
+    <Content Include="icons\32px\odt.png" />
+    <Content Include="icons\32px\otp.png" />
+    <Content Include="icons\32px\ots.png" />
+    <Content Include="icons\32px\ott.png" />
+    <Content Include="icons\32px\pdf.png" />
+    <Content Include="icons\32px\php.png" />
+    <Content Include="icons\32px\png.png" />
+    <Content Include="icons\32px\ppt.png" />
+    <Content Include="icons\32px\psd.png" />
+    <Content Include="icons\32px\py.png" />
+    <Content Include="icons\32px\qt.png" />
+    <Content Include="icons\32px\rar.png" />
+    <Content Include="icons\32px\rb.png" />
+    <Content Include="icons\32px\rtf.png" />
+    <Content Include="icons\32px\sass.png" />
+    <Content Include="icons\32px\scss.png" />
+    <Content Include="icons\32px\sql.png" />
+    <Content Include="icons\32px\tga.png" />
+    <Content Include="icons\32px\tgz.png" />
+    <Content Include="icons\32px\tiff.png" />
+    <Content Include="icons\32px\txt.png" />
+    <Content Include="icons\32px\wav.png" />
+    <Content Include="icons\32px\xls.png" />
+    <Content Include="icons\32px\xlsx.png" />
+    <Content Include="icons\32px\xml.png" />
+    <Content Include="icons\32px\yml.png" />
+    <Content Include="icons\32px\zip.png" />
+    <Content Include="icons\32px\_blank.png" />
+    <Content Include="icons\32px\_page.png" />
+    <Content Include="icons\48px\aac.png" />
+    <Content Include="icons\48px\ai.png" />
+    <Content Include="icons\48px\aiff.png" />
+    <Content Include="icons\48px\avi.png" />
+    <Content Include="icons\48px\bmp.png" />
+    <Content Include="icons\48px\c.png" />
+    <Content Include="icons\48px\cpp.png" />
+    <Content Include="icons\48px\css.png" />
+    <Content Include="icons\48px\csv.png" />
+    <Content Include="icons\48px\dat.png" />
+    <Content Include="icons\48px\dmg.png" />
+    <Content Include="icons\48px\doc.png" />
+    <Content Include="icons\48px\dotx.png" />
+    <Content Include="icons\48px\dwg.png" />
+    <Content Include="icons\48px\dxf.png" />
+    <Content Include="icons\48px\eps.png" />
+    <Content Include="icons\48px\exe.png" />
+    <Content Include="icons\48px\flv.png" />
+    <Content Include="icons\48px\gif.png" />
+    <Content Include="icons\48px\h.png" />
+    <Content Include="icons\48px\hpp.png" />
+    <Content Include="icons\48px\html.png" />
+    <Content Include="icons\48px\ics.png" />
+    <Content Include="icons\48px\iso.png" />
+    <Content Include="icons\48px\java.png" />
+    <Content Include="icons\48px\jpg.png" />
+    <Content Include="icons\48px\js.png" />
+    <Content Include="icons\48px\key.png" />
+    <Content Include="icons\48px\less.png" />
+    <Content Include="icons\48px\mid.png" />
+    <Content Include="icons\48px\mp3.png" />
+    <Content Include="icons\48px\mp4.png" />
+    <Content Include="icons\48px\mpg.png" />
+    <Content Include="icons\48px\odf.png" />
+    <Content Include="icons\48px\ods.png" />
+    <Content Include="icons\48px\odt.png" />
+    <Content Include="icons\48px\otp.png" />
+    <Content Include="icons\48px\ots.png" />
+    <Content Include="icons\48px\ott.png" />
+    <Content Include="icons\48px\pdf.png" />
+    <Content Include="icons\48px\php.png" />
+    <Content Include="icons\48px\png.png" />
+    <Content Include="icons\48px\ppt.png" />
+    <Content Include="icons\48px\psd.png" />
+    <Content Include="icons\48px\py.png" />
+    <Content Include="icons\48px\qt.png" />
+    <Content Include="icons\48px\rar.png" />
+    <Content Include="icons\48px\rb.png" />
+    <Content Include="icons\48px\rtf.png" />
+    <Content Include="icons\48px\sass.png" />
+    <Content Include="icons\48px\scss.png" />
+    <Content Include="icons\48px\sql.png" />
+    <Content Include="icons\48px\tga.png" />
+    <Content Include="icons\48px\tgz.png" />
+    <Content Include="icons\48px\tiff.png" />
+    <Content Include="icons\48px\txt.png" />
+    <Content Include="icons\48px\wav.png" />
+    <Content Include="icons\48px\xls.png" />
+    <Content Include="icons\48px\xlsx.png" />
+    <Content Include="icons\48px\xml.png" />
+    <Content Include="icons\48px\yml.png" />
+    <Content Include="icons\48px\zip.png" />
+    <Content Include="icons\48px\_blank.png" />
+    <Content Include="icons\48px\_page.png" />
+    <Content Include="icons\512px\aac.png" />
+    <Content Include="icons\512px\ai.png" />
+    <Content Include="icons\512px\aiff.png" />
+    <Content Include="icons\512px\avi.png" />
+    <Content Include="icons\512px\bmp.png" />
+    <Content Include="icons\512px\c.png" />
+    <Content Include="icons\512px\cpp.png" />
+    <Content Include="icons\512px\css.png" />
+    <Content Include="icons\512px\csv.png" />
+    <Content Include="icons\512px\dat.png" />
+    <Content Include="icons\512px\dmg.png" />
+    <Content Include="icons\512px\doc.png" />
+    <Content Include="icons\512px\dotx.png" />
+    <Content Include="icons\512px\dwg.png" />
+    <Content Include="icons\512px\dxf.png" />
+    <Content Include="icons\512px\eps.png" />
+    <Content Include="icons\512px\exe.png" />
+    <Content Include="icons\512px\flv.png" />
+    <Content Include="icons\512px\gif.png" />
+    <Content Include="icons\512px\h.png" />
+    <Content Include="icons\512px\hpp.png" />
+    <Content Include="icons\512px\html.png" />
+    <Content Include="icons\512px\ics.png" />
+    <Content Include="icons\512px\iso.png" />
+    <Content Include="icons\512px\java.png" />
+    <Content Include="icons\512px\jpg.png" />
+    <Content Include="icons\512px\js.png" />
+    <Content Include="icons\512px\key.png" />
+    <Content Include="icons\512px\less.png" />
+    <Content Include="icons\512px\mid.png" />
+    <Content Include="icons\512px\mp3.png" />
+    <Content Include="icons\512px\mp4.png" />
+    <Content Include="icons\512px\mpg.png" />
+    <Content Include="icons\512px\odf.png" />
+    <Content Include="icons\512px\ods.png" />
+    <Content Include="icons\512px\odt.png" />
+    <Content Include="icons\512px\otp.png" />
+    <Content Include="icons\512px\ots.png" />
+    <Content Include="icons\512px\ott.png" />
+    <Content Include="icons\512px\pdf.png" />
+    <Content Include="icons\512px\php.png" />
+    <Content Include="icons\512px\png.png" />
+    <Content Include="icons\512px\ppt.png" />
+    <Content Include="icons\512px\psd.png" />
+    <Content Include="icons\512px\py.png" />
+    <Content Include="icons\512px\qt.png" />
+    <Content Include="icons\512px\rar.png" />
+    <Content Include="icons\512px\rb.png" />
+    <Content Include="icons\512px\rtf.png" />
+    <Content Include="icons\512px\sass.png" />
+    <Content Include="icons\512px\scss.png" />
+    <Content Include="icons\512px\sql.png" />
+    <Content Include="icons\512px\tga.png" />
+    <Content Include="icons\512px\tgz.png" />
+    <Content Include="icons\512px\tiff.png" />
+    <Content Include="icons\512px\txt.png" />
+    <Content Include="icons\512px\wav.png" />
+    <Content Include="icons\512px\xls.png" />
+    <Content Include="icons\512px\xlsx.png" />
+    <Content Include="icons\512px\xml.png" />
+    <Content Include="icons\512px\yml.png" />
+    <Content Include="icons\512px\zip.png" />
+    <Content Include="icons\512px\_blank.png" />
+    <Content Include="icons\512px\_page.png" />
+    <Content Include="icons\icons.png" />
+    <Content Include="Images\img104.jpg" />
+    <Content Include="Models\Model1.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>Model1.edmx</DependentUpon>
+      <LastGenOutput>Model1.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\Model1.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>Model1.edmx</DependentUpon>
+      <LastGenOutput>Model1.cs</LastGenOutput>
+    </Content>
+    <Content Include="Scripts\bootstrap.bundle.js" />
+    <Content Include="Scripts\bootstrap.bundle.min.js" />
+    <Content Include="Scripts\bootstrap.esm.js" />
+    <Content Include="Scripts\bootstrap.esm.min.js" />
+    <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Scripts\bootstrap.min.js.map" />
+    <Content Include="Scripts\bootstrap.js.map" />
+    <Content Include="Scripts\bootstrap.esm.min.js.map" />
+    <Content Include="Scripts\bootstrap.esm.js.map" />
+    <Content Include="Scripts\bootstrap.bundle.min.js.map" />
+    <Content Include="Scripts\bootstrap.bundle.js.map" />
+    <Content Include="Content\bootstrap.rtl.min.css.map" />
+    <Content Include="Content\bootstrap.rtl.css.map" />
+    <Content Include="Content\bootstrap.min.css.map" />
+    <Content Include="Content\bootstrap.css.map" />
+    <Content Include="Content\bootstrap-utilities.rtl.min.css.map" />
+    <Content Include="Content\bootstrap-utilities.rtl.css.map" />
+    <Content Include="Content\bootstrap-utilities.min.css.map" />
+    <Content Include="Content\bootstrap-utilities.css.map" />
+    <Content Include="Content\bootstrap-reboot.rtl.min.css.map" />
+    <Content Include="Content\bootstrap-reboot.rtl.css.map" />
+    <Content Include="Content\bootstrap-reboot.min.css.map" />
+    <Content Include="Content\bootstrap-reboot.css.map" />
+    <Content Include="Content\bootstrap-grid.rtl.min.css.map" />
+    <Content Include="Content\bootstrap-grid.rtl.css.map" />
+    <Content Include="Content\bootstrap-grid.min.css.map" />
+    <Content Include="Content\bootstrap-grid.css.map" />
+    <Content Include="icons\icons.ai" />
+    <Content Include="icons\icons.pdf" />
+    <Content Include="icons\LICENSE" />
+    <Content Include="icons\README.md" />
+    <Content Include="icons\template.psd" />
+    <EntityDeploy Include="Models\Model1.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>Model1.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\Model1.edmx.diagram">
+      <DependentUpon>Model1.edmx</DependentUpon>
+    </Content>
+    <None Include="Scripts\jquery-3.4.1.intellisense.js" />
+    <Content Include="Scripts\jquery-3.4.1.js" />
+    <Content Include="Scripts\jquery-3.4.1.min.js" />
+    <Content Include="Scripts\jquery-3.4.1.slim.js" />
+    <Content Include="Scripts\jquery-3.4.1.slim.min.js" />
+    <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.validate.js" />
+    <Content Include="Scripts\jquery.validate.min.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Scripts\MyScripts\file_menu.js" />
+    <Content Include="Scripts\MyScripts\groups.js" />
+    <Content Include="Scripts\MyScripts\load.js" />
+    <Content Include="Scripts\MyScripts\options.js" />
+    <Content Include="Scripts\MyScripts\share_tabs.js" />
+    <Content Include="Scripts\MyScripts\users.js" />
+    <Content Include="Web.config" />
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Views\Web.config" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\Home\Contact.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Home\Login.cshtml" />
+    <Content Include="Views\Home\SharedWithYou.cshtml" />
+    <Content Include="Views\Shared\Shared_Layout.cshtml" />
+    <Content Include="Views\Home\Users.cshtml" />
+    <Content Include="Views\Home\Garbage.cshtml" />
+    <Content Include="Views\Home\Link.cshtml" />
+    <Content Include="Views\Home\Downloads.cshtml" />
+    <Content Include="Views\Home\GroupsFiles.cshtml" />
+    <Content Include="Views\Home\GroupsIndex.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <Content Include="Scripts\jquery-3.4.1.slim.min.map" />
+    <Content Include="Scripts\jquery-3.4.1.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>60447</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:60447/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>Данный проект ссылается на пакеты NuGet, отсутствующие на этом компьютере. Используйте восстановление пакетов NuGet, чтобы скачать их.  Дополнительную информацию см. по адресу: http://go.microsoft.com/fwlink/?LinkID=322105. Отсутствует следующий файл: {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+    <Error Condition="!Exists('..\packages\System.Text.Json.6.0.0\build\System.Text.Json.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\System.Text.Json.6.0.0\build\System.Text.Json.targets'))" />
+  </Target>
+  <Import Project="..\packages\System.Text.Json.6.0.0\build\System.Text.Json.targets" Condition="Exists('..\packages\System.Text.Json.6.0.0\build\System.Text.Json.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target> -->
+</Project>

@@ -1,0 +1,95 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - FileServer</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/Scripts/MyScripts/options.js")
+
+    @using WebApplication2.Controllers;
+    @using WebApplication2.Models;
+    @{
+        Users userInfo = ViewBag.userInfo;
+            //HomeController.ProcessStorageSpace((string)ViewBag.login,(PvI_KP_Entities)ViewBag.context);
+
+
+}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+</head>
+<body>
+
+    <nav class="navbar fixed-top navbar-light" id="main_menu" style="background-color: #a1d7ff; ">
+        <div class="container-fluid">
+            <div class="col-4">
+                <a class="navbar-brand" href="~/">FileServer</a>
+            </div>
+            <div class="col-6">
+                @*<form class="d-flex disabled">
+                    <input class="form-control me-1 col-1" type="search" placeholder="Поиск" aria-label="Search">
+                    <button class="btn btn-outline-primary" type="submit">Найти</button>
+                </form>*@
+            </div>
+            @if (ViewBag.Authorized)
+            {
+                <div class="nav-item dropdown">
+                    <button class="btn dropdown-toggle" type="button" style="min-width: 180px" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                        @ViewBag.login
+                    </button>
+                    <style>
+                        .disabled {
+                            pointer-events: none;
+                            opacity: 0.6;
+                        }
+                    </style>
+                    <ul class="dropdown-menu" style="width: 180px" aria-labelledby="dropdownMenuButton1">
+                        <li><a class="dropdown-item disabled" href="#">Профиль</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="@(HomeController.hostname)Home/LogOut">Выйти</a></li>
+                    </ul>
+                </div>
+            }
+            else
+            {
+                <div class="nav-item">
+                    <a class="btn btn-outline-secondary" style="min-width: 180px" href="/Home/Login/">
+                        <span>Войти в систему</span>
+                    </a>
+                    <style>
+                        .disabled {
+                            pointer-events: none;
+                            opacity: 0.6;
+                        }
+                    </style>
+                </div>
+            }
+        </div>
+    </nav>
+
+    <div style="margin:15px">
+        <div class="row">
+            <div>@RenderBody()</div>
+        </div>
+
+        @RenderSection("footer", false)
+    </div>
+    @Scripts.Render("~/bundles/jquery")
+
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+    @Scripts.Render("~/Scripts/MyScripts/load.js")
+    <script>
+        PageLoad('@ViewBag.Action');
+    </script>
+
+    @{if (TempData["toast"] != null && (bool)TempData["toast"])
+        {
+            <script>
+                $('.toast').show();
+            </script>
+        }
+    }
+</body>
+</html>

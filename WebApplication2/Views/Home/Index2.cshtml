@@ -1,0 +1,86 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+@using WebApplication2.Classes;
+
+@*<div class="jumbotron">
+        <h1>ASP.NET</h1>
+        <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
+        <p><a href="https://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+    </div>*@
+<style>
+    ._pagination {
+        margin: 15px 0 0 0;
+    }
+
+    .item {
+        margin: 0 0 5px 0;
+    }
+</style>
+<div class="card" style="height: 620px">
+    <div class="card-header" style="font-size:16px;">
+        Файлы
+    </div>
+    <div class="card-body">
+        <div>
+            <div class="overflow-auto" style="height: 490px; padding: 10px 15px 10px 15px ">
+
+                @{
+                    CurrentFolder home = new CurrentFolder(@"E:\");
+                    var items = home.GetAll();
+
+                    @:<div class="row row-cols-auto">
+                        for (int i = 0; i < items.Count; i++)
+                        {
+                            @:<div class="col">
+                                <button class="btn item">
+
+                                    <img src="~/icons/48px/@items[i].Icon.Name" />
+                                    <div class="_progress">
+                                        <span style="display: inline-block; width: 80px; font-size:12px">@items[i].ShortedName</span>
+                                    </div>
+
+                                    @*<div class="dropdown-menu" id="context-menu">
+                                            <a class="dropdown-item" href="#">Action</a>
+                                            <a class="dropdown-item" href="#">Another action</a>
+                                            <a class="dropdown-item" href="#">Something else here</a>
+                                        </div>*@
+                                </button>
+                            @:</div>
+                        }
+                    @:</div>
+                }
+            </div>
+        </div>
+
+        <nav class="_pagination">
+            <ul class="pagination">
+                <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item"><a class="page-link" href="#">4</a></li>
+                <li class="page-item"><a class="page-link" href="#">5</a></li>
+                <li class="page-item"><a class="page-link" href="#">Next</a></li>
+            </ul>
+        </nav>
+    </div>
+</div>
+</div>
+
+@section footer{
+    <style>
+        footer {
+            position: fixed; /* Фиксированное положение */
+            left: 0;
+            bottom: 0; /* Левый нижний угол */
+            /*padding: 10px;*/ /* Поля вокруг текста */
+            background: #e3f2fd; /* Цвет фона */
+            width: 100%; /* Ширина слоя */
+        }
+    </style>
+    <footer>
+        <p style="margin: 15px">&copy; @DateTime.Now.Year - Демьянчик Илья Сергеевич</p>
+    </footer>
+}
